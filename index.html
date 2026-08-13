@@ -306,21 +306,41 @@
     <div class="grid2">
       <div class="field">
         <label for="strength">장점 키워드</label>
-        <select id="strength">
+        <select id="strength" onchange="toggleCustomField('strength')">
           <option value="꼼꼼함">꼼꼼함</option>
+          <option value="책임감">책임감</option>
           <option value="성실함">성실함</option>
           <option value="주도성">주도성</option>
           <option value="협업 능력">협업 능력</option>
+          <option value="소통 능력">소통 능력</option>
+          <option value="빠른 학습력">빠른 학습력</option>
+          <option value="문제해결력">문제해결력</option>
+          <option value="일정 관리 능력">일정 관리 능력</option>
+          <option value="피드백 수용력">피드백 수용력</option>
+          <option value="관찰력">관찰력</option>
           <option value="트렌드 감각">트렌드 감각</option>
+          <option value="새로운 시도에 대한 적극성">새로운 시도에 대한 적극성</option>
+          <option value="집중력">집중력</option>
+          <option value="직접입력">직접 입력</option>
         </select>
+        <input type="text" id="strengthCustom" placeholder="나의 장점을 직접 입력하세요" style="display:none; margin-top:8px;">
       </div>
       <div class="field">
         <label for="weakness">보완 중인 점</label>
-        <select id="weakness">
-          <option value="완벽을 추구하다 보니 작업 속도가 다소 느려지는 것">완벽 추구 → 속도 저하</option>
-          <option value="새로운 툴 적응에 시간이 걸리는 것">새 툴 적응 시간</option>
-          <option value="혼자 판단하고 진행하려는 경향">혼자 판단하려는 경향</option>
+        <select id="weakness" onchange="toggleCustomField('weakness')">
+          <option value="완벽을 추구하다 보니 작업 속도가 다소 느려지는 편">완성도를 높이려다 작업 속도가 느려지는 편</option>
+          <option value="처음부터 완성도를 높이려 해 초안 작성에 시간이 걸리는 편">초안 작성에 시간이 걸리는 편</option>
+          <option value="새로운 툴에 적응하는 데 시간이 필요한 편">새로운 툴 적응에 시간이 필요한 편</option>
+          <option value="문제를 혼자 해결하려는 경향">혼자 해결하려는 경향</option>
+          <option value="의견을 신중하게 전달해 의사 표현이 늦어지는 편">의사 표현이 신중한 편</option>
+          <option value="여러 아이디어를 비교하다 결정을 내리는 데 시간이 걸리는 편">결정에 시간이 걸리는 편</option>
+          <option value="세부사항에 집중하다 전체 일정을 놓칠 때가 있는 편">세부사항에 집중하는 편</option>
+          <option value="새로운 환경에서는 처음에 다소 조심스러운 편">새로운 환경에서 조심스러운 편</option>
+          <option value="여러 업무를 한꺼번에 처리하려는 경향">여러 일을 한꺼번에 처리하려는 편</option>
+          <option value="도움을 요청하기 전에 혼자 고민하는 시간이 긴 편">도움 요청이 늦어지는 편</option>
+          <option value="직접입력">직접 입력</option>
         </select>
+        <input type="text" id="weaknessCustom" placeholder="보완 중인 점을 직접 입력하세요" style="display:none; margin-top:8px;">
       </div>
     </div>
     <div class="field">
@@ -403,6 +423,48 @@ function selectedTools(){
   return chips.length ? chips.join('·') : 'Photoshop·Illustrator';
 }
 
+function toggleCustomField(type){
+  const select = document.getElementById(type);
+  const custom = document.getElementById(type + 'Custom');
+  custom.style.display = select.value === '직접입력' ? 'block' : 'none';
+  if(select.value !== '직접입력') custom.value = '';
+}
+
+function selectedOrCustom(type, fallback){
+  const select = document.getElementById(type);
+  if(select.value === '직접입력'){
+    const custom = document.getElementById(type + 'Custom').value.trim();
+    return custom || fallback;
+  }
+  return select.value || fallback;
+}
+
+function weaknessImprovement(weakness){
+  const map = {
+    '완벽을 추구하다 보니 작업 속도가 다소 느려지는 편':
+      '이를 보완하기 위해 작업별 마감 시간을 먼저 정하고, 중요도에 따라 우선순위를 나누어 정해진 시간 안에 완성하는 연습을 하고 있습니다.',
+    '처음부터 완성도를 높이려 해 초안 작성에 시간이 걸리는 편':
+      '이를 보완하기 위해 먼저 빠르게 초안을 만든 뒤 수정 단계를 나누어 완성도를 높이는 방식으로 작업하고 있습니다.',
+    '새로운 툴에 적응하는 데 시간이 필요한 편':
+      '이를 보완하기 위해 새로운 기능을 작은 실습 단위로 반복하고, 자주 사용하는 기능은 따로 정리해 실제 작업에 적용하는 습관을 들이고 있습니다.',
+    '문제를 혼자 해결하려는 경향':
+      '이를 보완하기 위해 일정 시간 이상 해결되지 않는 문제는 진행 상황을 정리한 뒤 주변에 질문하고 피드백을 요청하는 기준을 세웠습니다.',
+    '의견을 신중하게 전달해 의사 표현이 늦어지는 편':
+      '이를 보완하기 위해 회의나 협업 전 핵심 의견을 미리 메모하고, 결론부터 간결하게 전달하는 연습을 하고 있습니다.',
+    '여러 아이디어를 비교하다 결정을 내리는 데 시간이 걸리는 편':
+      '이를 보완하기 위해 작업 목적, 타깃, 마감일을 기준으로 우선순위를 정해 선택지를 빠르게 좁히고 있습니다.',
+    '세부사항에 집중하다 전체 일정을 놓칠 때가 있는 편':
+      '이를 보완하기 위해 작업 시작 전 전체 일정과 중간 마감 시점을 먼저 확인하고, 체크리스트로 진행 상황을 관리하고 있습니다.',
+    '새로운 환경에서는 처음에 다소 조심스러운 편':
+      '이를 보완하기 위해 새로운 환경에서는 업무 흐름과 담당자를 먼저 파악하고, 모르는 부분은 초기에 적극적으로 질문하려고 노력하고 있습니다.',
+    '여러 업무를 한꺼번에 처리하려는 경향':
+      '이를 보완하기 위해 해야 할 일을 우선순위와 마감일 기준으로 나누고, 한 번에 하나의 핵심 업무에 집중하는 방식으로 관리하고 있습니다.',
+    '도움을 요청하기 전에 혼자 고민하는 시간이 긴 편':
+      '이를 보완하기 위해 먼저 스스로 확인할 범위를 정하고, 해결되지 않을 경우 빠르게 상황을 공유해 필요한 도움을 요청하고 있습니다.'
+  };
+  return map[weakness] || '이를 보완하기 위해 부족한 점을 스스로 점검하고, 구체적인 행동 기준을 정해 꾸준히 개선하려고 노력하고 있습니다.';
+}
+
 function generateDraft(){
   const company = val('company', '귀사');
   const job = val('job', '콘텐츠 디자인');
@@ -410,8 +472,9 @@ function generateDraft(){
   const tools = selectedTools();
   const output = val('output', '카드뉴스 6종');
   const skillDetail = val('skillDetail', '정보 위계와 톤앤매너를 통일하는 실습을 반복하며 실무 활용 능력을 갖추었습니다');
-  const strength = val('strength', '꼼꼼함');
-  const weakness = val('weakness', '완벽을 추구하다 보니 작업 속도가 다소 느려지는 것');
+  const strength = selectedOrCustom('strength', '꼼꼼함');
+  const weakness = selectedOrCustom('weakness', '완벽을 추구하다 보니 작업 속도가 다소 느려지는 편');
+  const weaknessAction = weaknessImprovement(weakness);
   const strengthStory = val('strengthStory', '카드뉴스 제작 과정에서 정보 위계와 색상 규칙이 맞는지 다시 확인하며 오류를 줄이고자 노력했습니다');
   const goal = val('goal', '사내 디자인 가이드와 작업 흐름을 빠르게 파악하는 것');
 
@@ -433,7 +496,7 @@ ${strengthStory} 그 결과 제작 과정에서 발생하는 실수를 줄이고
 
 [단점 및 보완 노력]
 반면, ${weakness}이 있었습니다.
-이를 보완하기 위해 작업 전 우선순위를 정리하고, 시간 기준을 설정하여 일정 내에 시안을 마무리하는 연습을 하고 있습니다.`;
+${weaknessAction}`;
 
   const draft3 =
 `[직무경험 및 역량]
